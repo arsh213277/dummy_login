@@ -16,19 +16,27 @@ const Login = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
-      const data = await response.json();
-      
+  
+      // Log response status and body for debugging
+      const responseBody = await response.text();
+      console.log('Response Status:', response.status);
+      console.log('Response Body:', responseBody);
+  
       if (response.ok) {
-        
+        const data = JSON.parse(responseBody); // Ensure you parse JSON if response is text
+        console.log(data);
         localStorage.setItem('user', JSON.stringify(data));
         navigate('/profile');
       } else {
-        setError(data.message || 'Login failed');
+        const errorData = JSON.parse(responseBody); // Parse JSON error response
+        setError(errorData.message || 'Login failed');
       }
     } catch (err) {
+      console.error('Request Error:', err);
       setError('An error occurred');
     }
   };
+  
 
   return (
     <div className="card">
